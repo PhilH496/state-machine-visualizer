@@ -4,7 +4,7 @@
 #include <queue>
 #include <stack>
 #include <string>
-#include "DFA.h"
+#include "../include/DFA.h"
 
 //---------------------------------------------------------------------------------
 // DFA ctor

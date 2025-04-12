@@ -27,6 +27,9 @@ public:
     void Print();
     bool IsDead() const { return status == FAIL; }
     bool acceptsEmptyString() const;
+    map<int, map<char, int>> getDFATransitions() const { return Dtran; }
+    set<int> getInitStates() const { return init_states; }
+    set<int> getFinalStates() const { return fin_states; }
 
 private:
     map< int, map<char, int> > Dtran;

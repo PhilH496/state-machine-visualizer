@@ -156,3 +156,63 @@ json dfaToJson(const DFA& dfa) {
     
     return result;
 }
+
+int main(int argc, char* argv[]) {
+    // Check command line arguments
+    if (argc != 2) {
+        cerr << "Usage: " << argv[0] << " ../inputs/input.txt" << endl;
+        return 1;
+    }
+    
+    string inputFile = argv[1];
+    
+    // Read regex from input file
+    ifstream file(inputFile);
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << inputFile << endl;
+        return 1;
+    }
+    
+    string regex;
+    getline(file, regex);
+    file.close();
+    
+    // trim whitespace
+    regex.erase(std::remove_if(regex.begin(), regex.end(), ::isspace), regex.end());
+    
+    if (regex.empty()) {
+        cerr << "Error: Empty regex in input file" << endl;
+        return 1;
+    }
+    
+    try {
+        // convert regex to DFA
+        string postfix = InfixToPostfix(regex);
+        NFA nfa = PostfixToNFA(postfix);
+        DFA dfa = NFAtoDFA(nfa);
+        
+        // create JSON output
+        json output;
+        output["nfa"] = nfaToJson(nfa);
+        output["dfa"] = dfaToJson(dfa);
+        
+        ofstream outFile;
+        string outputPath = "resources/output.json";
+        outFile.open(outputPath);
+        if (!outFile.is_open()) {
+            outputPath = "../resources/output.json";
+            outFile.open(outputPath);
+            if (!outFile.is_open()) {
+                cerr << "Error: Could not create output.json" << endl;
+                return 1;
+            }
+        }
+        outFile << output.dump(2);
+        cout << "Regex converted. Results saved to " << outputPath << endl;
+    } catch (exception e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+    
+    return 0;
+}

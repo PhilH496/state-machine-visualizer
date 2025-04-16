@@ -87,4 +87,72 @@ json nfaToJson(const NFA& nfa) {
     result["accept"] = acceptStates;
     
     return result;
-}
+}
+
+// Helper function to convert DFA to JSON
+json dfaToJson(const DFA& dfa) {
+    json result;
+    
+    // Get all states
+    set<int> allStates;
+    map<int, map<char, int>> transitions = dfa.getDFATransitions();
+    
+    // Collect all states from transitions
+    for (const auto& row : transitions) {
+        allStates.insert(row.first);
+        for (const auto& trans : row.second) {
+            allStates.insert(trans.second);
+        }
+    }
+    // Add initial and final states
+    set<int> initStates = dfa.getInitStates();
+    for (int state : initStates) {
+        allStates.insert(state);
+    }
+    set<int> finalStates = dfa.getFinalStates();
+    for (int state : finalStates) {
+        allStates.insert(state);
+    }
+
+    // Sort states for consistent mapping
+    vector<int> sortedStates(allStates.begin(), allStates.end());
+    
+    vector<string> stateStrings;
+    for (int state : sortedStates) {
+        stateStrings.push_back(stateToString(state));
+    }
+    result["states"] = stateStrings;
+    
+    // Convert transitions
+    json transObj;
+    for (const auto& row : transitions) {
+        string srcState = stateToString(row.first);
+        json srcTrans;
+        for (const auto& trans : row.second) {
+            char sym = trans.first;
+            string symStr = string(1, sym);
+            string dstState = stateToString(trans.second);
+            srcTrans[symStr] = dstState;
+        }
+        if (!srcTrans.empty()) {
+            transObj[srcState] = srcTrans;
+        }
+    }
+    result["transitions"] = transObj;
+    
+    // Start state
+    if (!initStates.empty()) {
+        result["start"] = stateToString(*initStates.begin());
+    } else {
+        result["start"] = "";
+    }
+    
+    // Accept states
+    vector<string> acceptStates;
+    for (int state : finalStates) {
+        acceptStates.push_back(stateToString(state));
+    }
+    result["accept"] = acceptStates;
+    
+    return result;
+}

@@ -1,6 +1,4 @@
-# RegEx-Based Lexical Analyzer
-
-A configurable lexical analyzer that automatically constructs tokenizers from regular expressions. This tool implements Thompson's construction algorithm to convert regular expressions to NFAs, then uses the subset construction method to convert NFAs to DFAs, creating an efficient token recognition system.
+# State Machine Visualizer
 
 ## Features
 
@@ -8,16 +6,31 @@ A configurable lexical analyzer that automatically constructs tokenizers from re
 - Implements Thompson's construction to build NFAs from regular expressions
 - Converts NFAs to optimized DFAs using subset construction
 - Supports Kleene star (*), concatenation (.), and alternation (|) operations
-- Configurable token definitions through a simple interface
-- Validates that no token accepts an empty string
 
-## How It Works
+## Building it on WSL
 
-1. Define tokens with regular expressions
-2. The system automatically constructs a DFA for each token
-3. Input strings are processed through all DFAs simultaneously
-4. The longest matching token is selected at each position
-5. Invalid tokens are properly detected and reported
+1. mkdir build && cd build
+2. cmake ..
+3. make
+
+## Executing the Program
 
 The program is executed as follows:
-./a.out < input.txt > output.txt or with cat test_name.txt | .\a.exe > output.txt.
+```
+<path to your build folder>$ ./state_machine_visualizer ../inputs/<filename>.txt
+```
+
+The input files from the `inputs/` folder are then read and outputted to `index.html`.
+
+## Example Outputs
+
+Here are the outputs you can generate:
+
+### Input 1: `a.b`
+![Input 1 Output](resources/input1output.png)
+
+### Input 2: `(a|b)*`
+![Input 2 Output](resources/input2output.png)
+
+### Input 3: `(a.b)*.c`
+![Input 3 Output](resources/input3output.png)
